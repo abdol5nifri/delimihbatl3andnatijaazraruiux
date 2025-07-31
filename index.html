@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📋 أداة تنسيق النصوص</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f3f6;
+      padding: 20px;
+      direction: rtl;
+      text-align: right;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 12px;
+      font-size: 16px;
+      resize: vertical;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      direction: initial;
+    }
+
+    .controls {
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .controls select,
+    .controls button {
+      font-size: 15px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .controls select {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      color: #333;
+    }
+
+    .controls button {
+      color: white;
+      font-weight: bold;
+    }
+
+    .controls button:nth-child(2) { background: #007bff; }    /* تحويل إلى فواصل */
+    .controls button:nth-child(3) { background: #28a745; }    /* تحويل إلى أسطر */
+    .controls button:nth-child(4) { background: #ffc107; color: #000; } /* تبديل نوع الفاصل */
+    .controls button:nth-child(5) { background: #17a2b8; }    /* إزالة الفواصل */
+    .controls button:nth-child(6) { background: #6f42c1; }    /* نسخ */
+    .controls button:nth-child(7) { background: #dc3545; }    /* مسح */
+
+    .controls button:hover {
+      opacity: 0.9;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📋 أداة تنسيق النصوص</h2>
+
+  <label for="input">📝 النص الأصلي:</label>
+  <textarea id="input" placeholder="اكتب هنا..."></textarea>
+
+  <div class="controls">
+    <select id="separator">
+      <option value=",">فاصلة ,</option>
+      <option value="|">عمود |</option>
+      <option value="/">شرطة /</option>
+      <option value=" ">فراغ</option>
+    </select>
+
+    <button onclick="convertToSeparator()">تحويل إلى فواصل</button>
+    <button onclick="convertToLines()">تحويل إلى أسطر</button>
+    <button onclick="replaceSeparators()">تبديل نوع الفاصل</button>
+    <button onclick="removeAllSeparators()">إزالة الفواصل</button>
+    <button onclick="copyResult()">نسخ النتيجة</button>
+    <button onclick="clearAll()">مسح الكل</button>
+  </div>
+
+  <label for="output">📄 النتيجة:</label>
+  <textarea id="output" readonly placeholder="النتيجة ستظهر هنا..."></textarea>
+
+  <script>
+    function scrollToOutput() {
+      document.getElementById("output").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function convertToSeparator() {
+      const input = document.getElementById("input").value;
+      const separator = document.getElementById("separator").value;
+      const lines = input.split(/\n+/).map(line => line.trim()).filter(line => line !== "");
+      const result = lines.join(separator);
+      document.getElementById("output").value = result;
+      scrollToOutput();
+    }
+
+    function convertToLines() {
+      const input = document.getElementById("input").value;
+      const parts = input.split(/[,\|\/]+/).map(part => part.trim()).filter(part => part !== "");
+      document.getElementById("output").value = parts.join("\n");
+      scrollToOutput();
+    }
+
+    function replaceSeparators() {
+      const input = document.getElementById("input").value;
+      const newSeparator = document.getElementById("separator").value;
+      const replaced = input.replace(/[,\|\/]/g, newSeparator);
+      document.getElementById("output").value = replaced;
+      scrollToOutput();
+    }
+
+    function removeAllSeparators() {
+      const input = document.getElementById("input").value;
+      const lines = input.split(/\n+/).map(line =>
+        line.split(/[,\|\/]/)
+            .filter(w => w.trim() !== "")
+            .join(" ")
+      );
+      document.getElementById("output").value = lines.join("\n");
+      scrollToOutput();
+    }
+
+    function clearAll() {
+      document.getElementById("input").value = "";
+      document.getElementById("output").value = "";
+    }
+
+    function copyResult() {
+      const output = document.getElementById("output");
+      navigator.clipboard.writeText(output.value).then(() => {
+        alert("✅ تم نسخ النتيجة");
+      }).catch(() => {
+        alert("❌ فشل النسخ");
+      });
+    }
+  </script>
+
+</body>
+</html>
